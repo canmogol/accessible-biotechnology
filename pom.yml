@@ -1,0 +1,153 @@
+modelEncoding: UTF-8
+modelVersion: 4.0.0
+parent: {
+  # parent set to spring boot starter
+  artifactId: spring-boot-starter-parent,
+  groupId: org.springframework.boot,
+  version: 2.1.4.RELEASE,
+  relativePath: '',
+}
+groupId: dev.canm
+artifactId: accessible-biotechnology
+version: 0.0.1
+packaging: jar
+name: accessible-biotechnology
+description: Parent project for Accessible Biotechnology
+properties: {
+  # default maven properties
+  java.version: 1.8,
+  project.build.sourceEncoding: UTF-8,
+  project.reporting.outputEncoding: UTF-8,
+
+  # spring versions
+  version.spring-cloud: Greenwich.SR1,
+
+  # library versions
+  version.orika-core: 1.5.4,
+  version.spark-vcf: 0.3.0,
+  springfox-swagger2.version: 2.9.2,
+
+  # testing versions
+  version.mockito-all: 1.9.5,
+
+  # plugin versions
+  version.maven-compiler-plugin: 3.8.0,
+  version.maven-checkstyle-plugin: 3.0.0,
+  version.findbugs-jsr305: 3.0.5,
+  version.jacoco-maven-plugin: 0.8.2,
+
+  # plugin properties
+  jacoco.branch-coverage: 0.90,
+  jacoco.line-coverage: 0.90,
+  jacoco.complexity-coverage: 0.90,
+}
+dependencyManagement:
+  dependencies:
+    - {
+      # spring cloud is needed for tracing and monitoring
+      groupId: org.springframework.cloud,
+      artifactId: spring-cloud-dependencies,
+      version: '${version.spring-cloud}',
+      type: pom,
+      scope: import
+    }
+dependencies:
+  # COMPILE dependencies
+  # Spring
+  - groupId: org.springframework.boot
+    artifactId: spring-boot-starter-web
+  - {groupId: org.springframework.boot, artifactId: spring-boot-starter-security}
+  - {groupId: org.springframework.boot, artifactId: spring-boot-starter-data-jpa}
+  - {groupId: org.springframework.boot, artifactId: spring-boot-starter-actuator}
+  - {groupId: org.springframework.cloud, artifactId: spring-cloud-starter-sleuth}
+  - {groupId: org.springframework.cloud, artifactId: spring-cloud-starter-zipkin}
+  # Libraries
+  - {groupId: io.springfox, artifactId: springfox-swagger2, version: '${springfox-swagger2.version}'}
+  - {groupId: io.springfox, artifactId: springfox-swagger-ui, version: '${springfox-swagger2.version}'}
+  - {groupId: io.springfox, artifactId: springfox-bean-validators, version: '${springfox-swagger2.version}'}
+  - {groupId: ma.glasnost.orika, artifactId: orika-core, version: '${version.orika-core}'}
+  - groupId: com.lifeomic
+    artifactId: spark-vcf
+    version: ${version.spark-vcf}
+    exclusions:
+      - {artifactId: slf4j-log4j12, groupId: org.slf4j}
+  # RUNTIME dependencies
+  - {groupId: com.h2database, artifactId: h2, scope: runtime}
+  # OPTIONAL dependencies
+  - {groupId: org.projectlombok, artifactId: lombok, optional: true}
+  # TEST dependencies
+  - {groupId: org.springframework.boot, artifactId: spring-boot-starter-test, scope: test}
+  - {groupId: org.mockito, artifactId: mockito-all, version: '${version.mockito-all}', scope: test}
+build:
+  plugins:
+    # spring boot plugin
+    - {groupId: org.springframework.boot, artifactId: spring-boot-maven-plugin}
+    # maven compile plugin to set java version and other arguments
+    - groupId: org.apache.maven.plugins
+      artifactId: maven-compiler-plugin
+      version: ${version.maven-compiler-plugin}
+      configuration:
+        source: ${java.version}
+        target: ${java.version}
+        showWarnings: true
+        compilerArgs: {arg: '-Xlint:all'}
+    # checkstyle settings with suppression settings
+    - groupId: org.apache.maven.plugins
+      artifactId: maven-checkstyle-plugin
+      version: ${version.maven-checkstyle-plugin}
+      executions:
+        - configuration: {
+          configLocation: checkstyle.xml,
+          encoding: UTF-8,
+          consoleOutput: true,
+          failsOnError: true,
+          suppressionsLocation: checkstyle-suppression.xml
+        }
+          goals: [check]
+          id: checkstyle-compile
+          inherited: true
+          phase: validate
+          priority: 0
+    # findbugs plugin settings with exclude settings
+    - groupId: org.codehaus.mojo
+      artifactId: findbugs-maven-plugin
+      version: ${version.findbugs-jsr305}
+      configuration: {
+        effort: Max,
+        failOnError: true,
+        threshold: Low,
+        xmlOutput: true,
+        findbugsXmlOutputDirectory: '${project.build.directory}/target/findbugs',
+        excludeFilterFile: findbugs-exclude.xml
+      }
+      executions:
+        - goals: [check]
+          id: findbugs
+          inherited: true
+          phase: verify
+          priority: 0
+    # jacoco settings with coverage settings
+    - groupId: org.jacoco
+      artifactId: jacoco-maven-plugin
+      version: ${version.jacoco-maven-plugin}
+      executions:
+        - goals: [prepare-agent]
+          id: default-prepare-agent
+          inherited: true
+          priority: 0
+        - goals: [report]
+          id: default-report
+          inherited: true
+          phase: prepare-package
+          priority: 0
+        - configuration:
+            rules:
+              - element: BUNDLE
+                limits:
+                  - {counter: LINE, value: COVEREDRATIO, minimum: '${jacoco.line-coverage}'}
+                  - {counter: BRANCH, value: COVEREDRATIO, minimum: '${jacoco.branch-coverage}'}
+                  - {counter: COMPLEXITY, value: COVEREDRATIO, minimum: '${jacoco.complexity-coverage}'}
+          goals: [check]
+          id: default-check
+          inherited: true
+          priority: 0

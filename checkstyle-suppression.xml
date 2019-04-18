@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE suppressions PUBLIC
+    "-//Puppy Crawl//DTD Suppressions 1.0//EN"
+    "http://www.puppycrawl.com/dtds/suppressions_1_0.dtd">
+
+<suppressions>
+    <suppress files="[\\/]dev.canm[\\/].*\.java$" checks="JavadocVariable"/>
+    <suppress files="[\\/]dev.canm[\\/].*\.java$" checks="JavadocPackage"/>
+    <suppress files="[\\/]dev.canm[\\/].*\.java$" checks="AvoidInlineConditionals"/>
+    <suppress files="[\\/]dev.canm[\\/].*\.java$" checks="HideUtilityClassConstructor"/>
+    <suppress files="[\\/]dev.canm.*[\\/].*Configuration.java$" checks="DesignForExtension"/>
+    <suppress files="[\\/]dev.canm.*[\\/].*Config.java$" checks="DesignForExtension"/>
+    <suppress files="[\\/]dev.canm.*[\\/].*Controller.java$" checks="DesignForExtension"/>
+</suppressions>

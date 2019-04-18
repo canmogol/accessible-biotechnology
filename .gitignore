@@ -1,0 +1,203 @@
+######################
+# Project Specific
+######################
+
+
+
+
+
+
+######################
+# Intellij
+######################
+.idea/**
+*.iml
+*.iws
+*.ipr
+*.ids
+*.orig
+out/
+
+######################
+# Eclipse
+######################
+*.pydevproject
+.project
+.metadata
+.metadata/**
+/bin/**
+/tmp/**
+/tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+.settings/**
+.settings
+.loadpath
+/src/main/resources/rebel.xml
+
+# External tool builders
+.externalToolBuilders/**
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# CDT-specific
+.cproject
+
+# PDT-specific
+.buildpath
+
+
+######################
+# Unix/Linux
+######################
+!.gitignore
+!.git*
+
+
+######################
+# Maven
+######################
+/log/**
+/target/**
+
+
+######################
+# Gradle
+######################
+gradle/**
+.gradle/**
+*/.gradle/**
+
+
+######################
+# Package Files
+######################
+*.jar
+*.war
+*.ear
+*.db
+
+
+######################
+# Java
+######################
+*.class
+
+
+######################
+# Windows
+######################
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Folder config file
+Desktop.ini
+
+
+######################
+# Mac OSX
+######################
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+######################
+# Subversion
+######################
+.svn
+.svn/**
+*.svn
+
+
+######################
+# Directories
+######################
+/spring_loaded/**
+/deploy/**
+
+
+######################
+# Logs
+######################
+*.log
+logs
+logs/*
+tmp
+tmp/*
+
+
+######################
+# ESLint
+######################
+.eslintcache
+
+
+######################
+# Others
+######################
+*.*~
+*~
+.merge_file*
+.history
+.checkstyle
+.ekstazi
+.sonar
+.sonar/*
+output.txt
+hs_err_pid*
+.mtj.tmp/**
+.*.swp
+core
+
+
+
+
+######################
+# Node / JS / Web
+######################
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+######################
+# Test
+######################
+/test/unit/coverage/
+
+
+######################
+# Docker
+######################
+docker/package.json
+
+
+######################
+# Editors
+######################
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+.factorypath
+

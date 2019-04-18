@@ -1,0 +1,24 @@
+language: java
+sudo: false # faster builds
+
+jdk:
+  - openjdk8
+
+addons:
+  sonarcloud:
+    organization: "canmogol-github"
+    token:
+      secure: "JulqVFFCQ4Slghy0AL0kIcxBzYLKPQrGUMka/SjINbkhEMIo6QpfkzPT1yU2gy17PEND+UJZsWweSUUPpGcHp6vqkqFUOpxrj+jCDVye6glFTlxjy+JczFSpJWfWG5trcbykWuOF5EZ1b3iXK3Eo+2Ura/2hGgCnLylx+v+y/ihRXIc9dek+exUQQtUgOfEg7giFSL265hlQyFBfzDgSUrmK0ju5PNjgOcgqDZ9pGmhziOzcHr9vPX8EJ/ohID7UYw/dTgKTVmFYT8cunjcWSNqHtKMeeSBZ1CM6C7KhIa9jJiJamTamUupN6a7Sog7dQsTLvWCE3EqIK+JxP5+ksQrNBJf01ltZpArssHqdijulaMaB52uPfO5I249i74hmArdtKjMgrfE0B11BROCB4Swzr/YSfi2X+8GoQmqT5P4bZ5yVlP9nzd/nscyfR9WzLrW3uqliWyc4CkXfnpiqeNDkCsqC4rTXa4mXHPFu/kWC9oUHkl14NNRxoWj8ylRAQq+NW42CuCPI2gPG8e7gjSdsPPzQ/4s+lF/S5Hr+mgkFYF+ylLDEv3+R7igzFBOiAwY4t3BqIHFq4EjeP5KvSdrXzH7LMkGqVGaeE40D52L9mpFjTENE5v3qKPKzyXdporKCrAKTxpp3IgZ/a8frv1dO2xOXYYbXyrULaLX8Nwg="
+
+cache:
+  directories:
+    - $HOME/.m2
+
+install: true
+
+script:
+  - mvn clean install
+  - mvn sonar:sonar
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

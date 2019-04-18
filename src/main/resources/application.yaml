@@ -1,0 +1,23 @@
+server:
+    port: 8001
+api:
+    path: api
+    version: v0.0.1
+    endpoint:
+        snp: ${api.path}/${api.version}/snp
+spring:
+    h2:
+        console:
+            enabled: true
+    datasource:
+        url: jdbc:h2:mem:testdb
+        driver-class-name: org.h2.Driver
+        username: sa
+        password:
+    application:
+        name: accessible-biotechnology
+spark:
+    home: /usr/local/Cellar/apache-spark/2.4.1/libexec/
+    master: local
+    app:
+        name: ${spring.application.name}

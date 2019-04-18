@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<FindBugsFilter>
+    <Match>
+        <!-- suppressions for Lombok DTOs -->
+        <Class name="~.*DTO"/>
+        <Bug pattern="URF_UNREAD_FIELD,EI_EXPOSE_REP"/>
+    </Match>
+    <Match>
+        <!-- suppressions for Lombok DTO Builders -->
+        <Class name="~.*DTOBuilder"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+</FindBugsFilter>
