@@ -15,7 +15,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     /**
      * Disable CSRF and security.
      * @param http Http security
-     * @throws Exception Security setting error
+     * @throws Exception Security setting message
      */
     @Override
     protected void configure(final HttpSecurity http) throws Exception {

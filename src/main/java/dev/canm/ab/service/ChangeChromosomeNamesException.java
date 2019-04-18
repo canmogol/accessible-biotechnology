@@ -11,7 +11,7 @@ public class ChangeChromosomeNamesException extends Exception {
 
     /**
      * Constructor.
-     * @param message error message
+     * @param message message message
      * @param e causing exception
      */
     public ChangeChromosomeNamesException(

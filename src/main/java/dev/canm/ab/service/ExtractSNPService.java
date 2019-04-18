@@ -1,6 +1,6 @@
 package dev.canm.ab.service;
 
-import java.util.Map;
+import dev.canm.ab.service.model.ChangeResult;
 
 /**
  * SNP extract service.
@@ -11,17 +11,18 @@ public interface ExtractSNPService {
      * Extract SNPs larger then the given coverage value.
      * @param file SNP file name
      * @param coverage minimum coverage
-     * @throws ExtractSNPException error
+     * @throws ExtractSNPException message
+     * @return created file name
      */
-    void extractSNPsLargerThenCoverage(String file, Integer coverage) throws ExtractSNPException;
+    String extractSNPsLargerThenCoverage(String file, Integer coverage) throws ExtractSNPException;
 
     /**
      * Change chromosome names in the SNP File with the csv mappings.
      * @param snpFile SNP file
      * @param csvFile CSV file
-     * @return Data Map
-     * @throws ChangeChromosomeNamesException error
+     * @return ChangeResult change result
+     * @throws ChangeChromosomeNamesException message
      */
-    Map<String, Long> changeChromosomeNames(String snpFile, String csvFile) throws ChangeChromosomeNamesException;
+    ChangeResult changeChromosomeNames(String snpFile, String csvFile) throws ChangeChromosomeNamesException;
 
 }
