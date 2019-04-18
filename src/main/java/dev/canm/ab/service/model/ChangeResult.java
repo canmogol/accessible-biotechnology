@@ -16,4 +16,6 @@ public class ChangeResult {
 
     private Map<String, Double> customNamesAndAverages;
 
+    private String customNameFile;
+
 }

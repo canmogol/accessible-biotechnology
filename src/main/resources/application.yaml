@@ -16,6 +16,9 @@ spring:
         password:
     application:
         name: accessible-biotechnology
+    sleuth:
+        sampler:
+            probability: 1
 spark:
     home: /usr/local/Cellar/apache-spark/2.4.1/libexec/
     master: local
@@ -36,3 +39,15 @@ swagger:
     termsUrl: '"www.canm.dev/terms"'
     title: ${service.name}
     version: ${api.version}
+eureka:
+    client:
+        serviceUrl:
+            defaultZone: http://localhost:8761/eureka/
+        register-with-eureka: true
+        fetch-registry: true
+management:
+    endpoints:
+        web:
+            exposure:
+                include: "*"
+

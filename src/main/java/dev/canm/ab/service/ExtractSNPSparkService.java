@@ -33,7 +33,6 @@ import java.util.stream.Stream;
 @Service
 public class ExtractSNPSparkService implements ExtractSNPService {
 
-    private static final String FORMAT_JSON = "json";
     private static final String FORMAT_PARQUET = "parquet";
     private static final String FORMAT_VCF = "com.lifeomic.variants";
 
@@ -118,7 +117,7 @@ public class ExtractSNPSparkService implements ExtractSNPService {
             StructType schema = dataset.schema();
 
             // save the new Rows to a new File
-            saveNewFileWithCustomNames(snpFile, schema, javaRDD);
+            String customNameMappedFile = saveNewFileWithCustomNames(snpFile, schema, javaRDD);
 
             // find number of SNPs per CustomName
             Dataset<Row> dataFrame = sparkSession.createDataFrame(javaRDD, schema);
@@ -129,6 +128,7 @@ public class ExtractSNPSparkService implements ExtractSNPService {
             return ChangeResult.builder()
                 .customNamesAndNumberOfSNPs(customNameAndSNPs)
                 .customNamesAndAverages(customNameAverage)
+                .customNameFile(customNameMappedFile)
                 .build();
 
         } catch (IOException e) {
@@ -200,20 +200,22 @@ public class ExtractSNPSparkService implements ExtractSNPService {
 
     /**
      * Save the Rows to a new File.
-     *
-     * @param snpFile       SNP file
+     *  @param snpFile       SNP file
      * @param datasetSchema Schema for the Row
      * @param javaRDD       Rows
+     * @return Custom name mapped file.
      */
-    private void saveNewFileWithCustomNames(
+    private String saveNewFileWithCustomNames(
         final String snpFile,
         final StructType datasetSchema,
         final JavaRDD<Row> javaRDD) {
+        String customNameMappedFile = getCustomNameMappedFileName(snpFile, FORMAT_PARQUET);
         sparkSession.createDataFrame(javaRDD, datasetSchema)
             .write()
             .mode(SaveMode.Overwrite)
-            .format(FORMAT_JSON)
-            .save(getMappedFileName(snpFile, FORMAT_JSON));
+            .format(FORMAT_PARQUET)
+            .save(customNameMappedFile);
+        return customNameMappedFile;
     }
 
     /**
@@ -283,7 +285,7 @@ public class ExtractSNPSparkService implements ExtractSNPService {
      * @param format  file format
      * @return mapped file name
      */
-    private String getMappedFileName(
+    private String getCustomNameMappedFileName(
         final String snpFile,
         final String format) {
         return String.format("%s.CSV-Mapped.%s", snpFile, format);

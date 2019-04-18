@@ -14,4 +14,6 @@ public class ChangeDTO {
 
     private Map<String, Double> customNamesAndAverages;
 
+    private String customNameFile;
+
 }
