@@ -1,0 +1,88 @@
+{
+	"info": {
+		"_postman_id": "d7d6f792-da13-4fb7-a6b5-81d60830a593",
+		"name": "accessible-biotechnology",
+		"description": "Accessible Biotechnology Project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET - Change Chromosome Names To Custom Name",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:8001/snp/change?csvFile=/Users/can.mogol/garb/canmogol/accessible-biotechnology/src/test/resources/dictionary.csv&snpFile=/Users/can.mogol/garb/canmogol/accessible-biotechnology/src/test/resources/crop.test.snp.vcf.LargerThenCoverage-30.parquet",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"snp",
+						"change"
+					],
+					"query": [
+						{
+							"key": "csvFile",
+							"value": "/Users/can.mogol/garb/canmogol/accessible-biotechnology/src/test/resources/dictionary.csv"
+						},
+						{
+							"key": "snpFile",
+							"value": "/Users/can.mogol/garb/canmogol/accessible-biotechnology/src/test/resources/crop.test.snp.vcf.LargerThenCoverage-30.parquet"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET - Extract SNPs with DP GreaterThan",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:8001/snp/extract?coverage=30&file=/Users/can.mogol/garb/canmogol/accessible-biotechnology/src/test/resources/crop.test.snp.vcf",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"snp",
+						"extract"
+					],
+					"query": [
+						{
+							"key": "coverage",
+							"value": "30"
+						},
+						{
+							"key": "file",
+							"value": "/Users/can.mogol/garb/canmogol/accessible-biotechnology/src/test/resources/crop.test.snp.vcf"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

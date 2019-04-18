@@ -17,6 +17,7 @@ public class ChangeMapper extends ConfigurableMapper {
      *
      * @param factory mapping factory
      */
+    @Override
     protected final void configure(final MapperFactory factory) {
         factory.classMap(ChangeResult.class, ChangeDTO.class)
             .byDefault()

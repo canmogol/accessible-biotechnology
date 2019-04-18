@@ -28,6 +28,9 @@ On Windows environment you may run the `mvnw.cmd` command.
 mvnw.cmd clean install
 ```
 
+In order to test the REST API, you can use the "/swagger-ui.html" or the [POSTMAN collection](accessible-biotechnology.postman_collection.json)
+
+
 ### Installation
 
 By running `clean install` gaol, maven will install the artifact to the .m2 folder

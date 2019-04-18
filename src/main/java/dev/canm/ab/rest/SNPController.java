@@ -64,7 +64,7 @@ public class SNPController {
      * @param csvFile CSV mapping file
      * @return REST Response with success if the .
      */
-    @GetMapping(path = "/mapped")
+    @GetMapping(path = "/change")
     @ApiOperation("Change chromosome names with the CVS mapped values.")
     public ResponseEntity<ChangeDTO> changeChromosomeNames(
         @RequestParam("snpFile") final String snpFile,

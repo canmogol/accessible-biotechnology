@@ -21,3 +21,18 @@ spark:
     master: local
     app:
         name: ${spring.application.name}
+service:
+    name: accessible-biotechnology
+    description: Accessible Biotechnology Project
+swagger:
+    contact:
+        email: '"info@canm.dev"'
+        name: '"Can MOGOL"'
+        url: '"www.canm.dev"'
+    description: ${service.description}
+    license:
+        name: '"MIT License"'
+        url: '"www.canm.dev/license"'
+    termsUrl: '"www.canm.dev/terms"'
+    title: ${service.name}
+    version: ${api.version}
