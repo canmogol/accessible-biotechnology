@@ -37,9 +37,9 @@ properties: {
   version.jacoco-maven-plugin: 0.8.2,
 
   # plugin properties
-  jacoco.branch-coverage: 0.90,
-  jacoco.line-coverage: 0.90,
-  jacoco.complexity-coverage: 0.90,
+  jacoco.branch-coverage: 0.80,
+  jacoco.line-coverage: 0.80,
+  jacoco.complexity-coverage: 0.80,
 }
 dependencyManagement:
   dependencies:

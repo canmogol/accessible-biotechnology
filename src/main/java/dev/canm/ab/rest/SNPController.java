@@ -43,8 +43,10 @@ public class SNPController {
     @GetMapping(path = "/extract")
     @ApiOperation("Extracts the SNPs with coverage larger then the given number.")
     public ResponseEntity<CreatedFileDTO> extractSNPsLargerThenCoverage(
-        @RequestParam("file") @ApiParam(defaultValue = "/tmp/crop.test.snp.vcf") final String file,
-        @RequestParam("coverage") @ApiParam(defaultValue = "40")final Integer coverage) {
+        @RequestParam("file") @ApiParam(defaultValue = "/tmp/crop.test.snp.vcf")
+        final String file,
+        @RequestParam("coverage") @ApiParam(defaultValue = "40")
+        final Integer coverage) {
         try {
             String createdFileName = extractSNPService.extractSNPsLargerThenCoverage(file, coverage);
             CreatedFileDTO createdFileDTO = CreatedFileDTO.builder()
@@ -70,8 +72,10 @@ public class SNPController {
     @GetMapping(path = "/change")
     @ApiOperation("Change chromosome names with the CVS mapped values.")
     public ResponseEntity<ChangeDTO> changeChromosomeNames(
-        @RequestParam("snpFile") @ApiParam(defaultValue = "/tmp/crop.test.snp.vcf.LargerThenCoverage-40.parquet") final String snpFile,
-        @RequestParam("csvFile") @ApiParam(defaultValue = "/tmp/dictionary.csv") final String csvFile) {
+        @RequestParam("snpFile") @ApiParam(defaultValue = "/tmp/crop.test.snp.vcf.LargerThenCoverage-40.parquet")
+        final String snpFile,
+        @RequestParam("csvFile") @ApiParam(defaultValue = "/tmp/dictionary.csv")
+        final String csvFile) {
         try {
             ChangeResult changeResult = extractSNPService.changeChromosomeNames(snpFile, csvFile);
             ChangeDTO changeDTO = changeMapper.map(changeResult, ChangeDTO.class);
