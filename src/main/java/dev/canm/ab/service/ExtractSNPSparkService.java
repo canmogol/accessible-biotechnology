@@ -7,6 +7,7 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.types.StructType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -71,8 +72,7 @@ public class ExtractSNPSparkService implements ExtractSNPService {
                         chromPosMap.get(chrom).add(pos);
                         return coverage <= row.<Integer>getAs(KEY_COVERAGE);
                     }
-                })
-                .write()
+                })                .write()
                 .mode(SaveMode.Overwrite)
                 .format(FORMAT_PARQUET)
                 .save(getExtractedFileName(file, PREFIX_LT_COVERAGE, coverage, FORMAT_PARQUET));
@@ -86,59 +86,134 @@ public class ExtractSNPSparkService implements ExtractSNPService {
      *
      * @param snpFile SNP file
      * @param csvFile CSV file
-     * @return
+     * @return Map
      */
     @Override
     public final Map<String, Long> changeChromosomeNames(
         final String snpFile,
         final String csvFile) throws ChangeChromosomeNamesException {
         try {
-            Map<String, String> chromToCustomNameMap = Files.readAllLines(Paths.get(csvFile))
-                .stream()
-                .map(l -> {
-                    String[] snpNameCustomName = l.split(SEMICOLON);
-                    return new HashMap.SimpleEntry<>(snpNameCustomName[0], snpNameCustomName[1]);
-                })
-                .collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::getValue));
 
-            Dataset<Row> dataset = sparkSession
-                .read()
-                .format(FORMAT_PARQUET)
-                .load(snpFile)
-                .filter((FilterFunction<Row>) row ->
-                    chromToCustomNameMap.containsKey(row.<String>getAs(KEY_CHROM)));
+            // Chrom to Custom Name map
+            Map<String, String> chromToCustomNameMap = getChromosomeAndCustomNameMap(csvFile);
 
-            JavaRDD<Row> javaRDD = dataset
-                .javaRDD()
-                .map(row -> {
-                    String customName = chromToCustomNameMap.get(row.<String>getAs(KEY_CHROM));
-                    return RowFactory.create(
-                        customName,
-                        row.getAs(KEY_POS),
-                        row.getAs(KEY_COVERAGE),
-                        row.getAs(KEY_REF),
-                        row.getAs(KEY_ALT)
-                    );
-                });
+            // Filtered Dataset
+            Dataset<Row> dataset = getDatasetFromSNPFile(snpFile, chromToCustomNameMap);
 
-            sparkSession.createDataFrame(javaRDD, dataset.schema())
-                .write()
-                .mode(SaveMode.Overwrite)
-                .format(FORMAT_JSON)
-                .save(getMappedFileName(snpFile, FORMAT_JSON));
+            // replace the chromosome with custom name, create new Rows
+            JavaRDD<Row> javaRDD = createRowsWithCustomName(chromToCustomNameMap, dataset);
 
-            return sparkSession.createDataFrame(javaRDD, dataset.schema())
-                .groupBy(KEY_CHROM)
-                .count()
-                .collectAsList()
-                .stream()
-                .map(r -> new HashMap.SimpleEntry<String, Long>(r.getAs(KEY_CHROM), r.getAs(KEY_COUNT)))
-                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            StructType schema = dataset.schema();
+
+            // save the new Rows to a new File
+            saveNewFileWithCustomNames(snpFile, schema, javaRDD);
+
+            // find number of SNPs per CustomName
+            return findSNPEntryPerCustomName(javaRDD, schema);
+
         } catch (IOException e) {
             throw new ChangeChromosomeNamesException(e.getMessage(), e);
         }
     }
 
+    /**
+     * Finds the number of SNPs per Custom Name.
+     * @param javaRDD Rows
+     * @param schema Row schema
+     * @return Map with CustomName to Number of Entries
+     */
+    private Map<String, Long> findSNPEntryPerCustomName(
+        final JavaRDD<Row> javaRDD,
+        final StructType schema) {
+        return sparkSession.createDataFrame(javaRDD, schema)
+            .groupBy(KEY_CHROM)
+            .count()
+            .collectAsList()
+            .stream()
+            .map(r -> new HashMap.SimpleEntry<String, Long>(r.getAs(KEY_CHROM), r.getAs(KEY_COUNT)))
+            .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+    }
+
+    /**
+     * Save the Rows to a new File.
+     * @param snpFile SNP file
+     * @param datasetSchema Schema for the Row
+     * @param javaRDD Rows
+     */
+    private void saveNewFileWithCustomNames(
+        final String snpFile,
+        final StructType datasetSchema,
+        final JavaRDD<Row> javaRDD) {
+        sparkSession.createDataFrame(javaRDD, datasetSchema)
+            .write()
+            .mode(SaveMode.Overwrite)
+            .format(FORMAT_JSON)
+            .save(getMappedFileName(snpFile, FORMAT_JSON));
+    }
+
+    /**
+     * Creates new set of Rows with Custom Name instead of Chromosome.
+     * @param chromToCustomNameMap Map
+     * @param dataset Rows
+     * @return New set of Rows
+     */
+    private JavaRDD<Row> createRowsWithCustomName(
+        final Map<String, String> chromToCustomNameMap,
+        final Dataset<Row> dataset) {
+        return dataset
+            .javaRDD()
+            .map(row -> {
+                String customName = chromToCustomNameMap.get(row.<String>getAs(KEY_CHROM));
+                return RowFactory.create(
+                    customName,
+                    row.getAs(KEY_POS),
+                    row.getAs(KEY_COVERAGE),
+                    row.getAs(KEY_REF),
+                    row.getAs(KEY_ALT)
+                );
+            });
+    }
+
+    /**
+     * Loads SNP file and filters out the Rows that are not in the Custom Name Map.
+     * @param snpFile SNP file
+     * @param chromToCustomNameMap Map
+     * @return Dataset
+     */
+    private Dataset<Row> getDatasetFromSNPFile(
+        final String snpFile,
+        final Map<String, String> chromToCustomNameMap) {
+        return sparkSession
+            .read()
+            .format(FORMAT_PARQUET)
+            .load(snpFile)
+            .filter((FilterFunction<Row>) row ->
+                chromToCustomNameMap.containsKey(row.<String>getAs(KEY_CHROM)));
+    }
+
+    /**
+     * Creates a Map with Chromosome and its Custom Name map.
+     * @param csvFile CSV file
+     * @return Map with Chrom to Custom
+     * @throws IOException error at reading file
+     */
+    private Map<String, String> getChromosomeAndCustomNameMap(
+        final String csvFile) throws IOException {
+        return Files.readAllLines(Paths.get(csvFile))
+            .stream()
+            .map(l -> {
+                String[] snpNameCustomName = l.split(SEMICOLON);
+                return new HashMap.SimpleEntry<>(snpNameCustomName[0], snpNameCustomName[1]);
+            })
+            .collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::getValue));
+    }
+
+    /**
+     * Create an CSV-Mapped file name for SNP file.
+     * @param snpFile SNP File
+     * @param format file format
+     * @return mapped file name
+     */
     private String getMappedFileName(
         final String snpFile,
         final String format) {
