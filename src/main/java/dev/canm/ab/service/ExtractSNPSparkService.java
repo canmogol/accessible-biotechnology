@@ -159,7 +159,8 @@ public class ExtractSNPSparkService implements ExtractSNPService {
      * @param dataFrame rows
      * @return Custom name to avarage mapping
      */
-    private Map<String, Double> getCustomNameAndAverage(Dataset<Row> dataFrame) {
+    private Map<String, Double> getCustomNameAndAverage(
+        final Dataset<Row> dataFrame) {
         Map<String, List<Long>> customNameToPositions = getCustomNamesAndPositions(dataFrame);
         return customNameToPositions
             .entrySet()
@@ -181,7 +182,8 @@ public class ExtractSNPSparkService implements ExtractSNPService {
      * @param dataFrame rows
      * @return Map
      */
-    private Map<String, List<Long>> getCustomNamesAndPositions(Dataset<Row> dataFrame) {
+    private Map<String, List<Long>> getCustomNamesAndPositions(
+        final Dataset<Row> dataFrame) {
         return dataFrame
             .select(KEY_CHROM, KEY_POS)
             .collectAsList()

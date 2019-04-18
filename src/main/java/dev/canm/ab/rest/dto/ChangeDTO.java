@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.util.Map;
 
+/**
+ * DTO for custom name change response.
+ */
 @Data
 public class ChangeDTO {
 
